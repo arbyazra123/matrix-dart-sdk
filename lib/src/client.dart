@@ -511,16 +511,7 @@ class Client extends MatrixApi {
     @Deprecated('Deprecated in favour of identifier.') String? medium,
     @Deprecated('Deprecated in favour of identifier.') String? address,
   }) async {
-    if (homeserver == null) {
-      final domain = identifier is AuthenticationUserIdentifier
-          ? identifier.user.domain
-          : null;
-      if (domain != null) {
-        await checkHomeserver(Uri.https(domain, ''));
-      } else {
-        throw Exception('No homeserver specified!');
-      }
-    }
+    
     final response = await super.login(
       type,
       identifier: identifier,
@@ -712,7 +703,8 @@ class Client extends MatrixApi {
     if (groupCall) {
       powerLevelContentOverride ??= {};
       if (powerLevelContentOverride['events'] is Map) {
-        powerLevelContentOverride['events'][EventTypes.GroupCallMemberPrefix] = 0;
+        powerLevelContentOverride['events'][EventTypes.GroupCallMemberPrefix] =
+            0;
         powerLevelContentOverride['events'][EventTypes.GroupCallPrefix] = 0;
       }
     }
@@ -1064,7 +1056,8 @@ class Client extends MatrixApi {
       await abortSync();
       await dispose(closeDatabase: false);
 
-      final export = await database!.exportDump(supportDeleteCollections: _supportDeleteCollections);
+      final export = await database!
+          .exportDump(supportDeleteCollections: _supportDeleteCollections);
 
       await clear();
       return export;
@@ -1085,7 +1078,8 @@ class Client extends MatrixApi {
 
     _database ??= await databaseBuilder!.call(this);
 
-    final success = await database!.importDump(export, supportDeleteCollections: _supportDeleteCollections);
+    final success = await database!.importDump(export,
+        supportDeleteCollections: _supportDeleteCollections);
 
     if (success) {
       // closing including DB
@@ -1115,7 +1109,7 @@ class Client extends MatrixApi {
       return setAvatarUrl(userID!, Uri.parse(''));
     }
     if (file.bytes == null) {
-      return ;
+      return;
     }
     final uploadResp = await uploadContent(
       file.bytes!,
@@ -1623,7 +1617,8 @@ class Client extends MatrixApi {
     Logs().outputEvents.clear();
     try {
       await abortSync();
-      await database?.clear(supportDeleteCollections: _supportDeleteCollections);
+      await database?.clear(
+          supportDeleteCollections: _supportDeleteCollections);
       _backgroundSync = true;
     } catch (e, s) {
       Logs().e('Unable to clear database', e, s);
@@ -3110,7 +3105,8 @@ class Client extends MatrixApi {
         Logs().e('Unable to migrate inbound group sessions!', e, s);
       }
 
-      await legacyDatabase.clear(supportDeleteCollections: _supportDeleteCollections);
+      await legacyDatabase.clear(
+          supportDeleteCollections: _supportDeleteCollections);
     }
     await legacyDatabase?.close();
     _initLock = false;
